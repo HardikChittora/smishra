@@ -1,0 +1,10 @@
+import {cp, mkdir, readdir} from 'node:fs/promises';
+import {fileURLToPath} from 'node:url';
+import path from 'node:path';
+const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const out = path.join(root, 'dist');
+await mkdir(out, {recursive:true});
+await cp(path.join(root, 'src/pages'), out, {recursive:true});
+await cp(path.join(root, 'src/assets'), path.join(out, 'assets'), {recursive:true});
+for (const name of ['app.js','replica.css']) await cp(path.join(root,'src',name),path.join(out,name));
+console.log('Built six standalone pages in dist/.');
