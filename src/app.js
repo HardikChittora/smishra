@@ -24,8 +24,21 @@ document.querySelectorAll('.wixui-video-box').forEach(box => {
     control.setAttribute('aria-label', video.paused ? 'Play material testing video' : 'Pause material testing video');
     box.toggleAttribute('data-playing', !video.paused);
   };
-  const toggle = () => video.paused ? video.play().catch(() => {}) : video.pause();
-  control.addEventListener('click', toggle);
+  const toggle = () => {
+    if (video.paused) video.play().catch(sync);
+    else video.pause();
+    sync();
+  };
+  box.addEventListener('click', event => {
+    const mute = event.target.closest('[aria-label="Mute"], [aria-label="Unmute"]');
+    if (mute) {
+      video.muted = !video.muted;
+      mute.setAttribute('aria-label', video.muted ? 'Unmute' : 'Mute');
+      mute.setAttribute('aria-pressed', String(video.muted));
+      return;
+    }
+    toggle();
+  });
   control.addEventListener('keydown', event => {
     if (event.key === 'Enter' || event.key === ' ') {event.preventDefault();toggle();}
   });
