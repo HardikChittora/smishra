@@ -15,7 +15,7 @@ Open http://127.0.0.1:4173/. After editing files while the server is running, ru
 ## Project files
 
 - `src/content.json`: page content.
-- `src/assets/`: images, video and the counter font.
+- `src/assets/`: images, video and bundled fonts.
 - `src/assets-manifest.json`: original asset URLs.
 - `src/styles.css`: website styling.
 - `src/app.js`: navigation, slideshow, image viewer and local visit counter.
