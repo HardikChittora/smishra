@@ -22,12 +22,15 @@ Open http://127.0.0.1:4173/. After editing files while the server is running, ru
 - `scripts/render.mjs`: page templates.
 - `scripts/build.mjs`: generates `src/pages/` and `dist/`.
 - `scripts/serve.mjs`: local development server.
+- `vercel.json`: build command and output directory for Vercel.
 
 Generated folders are excluded from Git. Edit the source content and templates rather than generated HTML.
 
 ## Build
 
 Run `npm run build` to generate the complete static website in `dist/`. Use `dist` as the output directory when deploying to a static hosting service.
+
+Vercel reads these settings from `vercel.json` when the repository is imported. Deploy the latest `main` commit with the project root set to the repository root.
 
 ## Visit counter
 
