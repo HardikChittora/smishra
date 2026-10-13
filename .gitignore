@@ -2,3 +2,10 @@
 node_modules/
 *.tar.gz
 *.tgz
+
+# Generated website files
+dist/
+src/pages/
+
+# Local previews
+/*preview.jpg
