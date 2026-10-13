@@ -1,81 +1,84 @@
-// Standalone interactions replacing the reference site's platform runtime.
-const counter = document.getElementById('comp-kg57wti5');
-if (counter) {
-  let visits = 1;
-  try {
-    visits = Number(localStorage.getItem('laboratory-visits') || 0) + 1;
-    localStorage.setItem('laboratory-visits', String(visits));
-  } catch {}
-  const digits = document.createElement('div');
-  digits.className = 'visit-digits';
-  digits.setAttribute('aria-label', visits + ' visits in this browser');
-  String(visits).padStart(6, '0').split('').forEach(digit => {
-    const tile = document.createElement('span');tile.textContent = digit;digits.append(tile);
-  });
-  const label = document.createElement('div');label.className = 'visit-label';label.textContent = 'Visits';
-  counter.append(digits, label);
-}
-document.querySelectorAll('.wixui-video-box').forEach(box => {
-  const video = box.querySelector('video');
-  const control = box.querySelector('[role="button"]');
-  if (!video || !control) return;
-  const sync = () => {
-    control.setAttribute('aria-pressed', String(!video.paused));
-    control.setAttribute('aria-label', video.paused ? 'Play material testing video' : 'Pause material testing video');
-    box.toggleAttribute('data-playing', !video.paused);
-  };
-  const toggle = () => {
-    if (video.paused) video.play().catch(sync);
-    else video.pause();
-    sync();
-  };
-  box.addEventListener('click', event => {
-    const mute = event.target.closest('[aria-label="Mute"], [aria-label="Unmute"]');
-    if (mute) {
-      video.muted = !video.muted;
-      mute.setAttribute('aria-label', video.muted ? 'Unmute' : 'Mute');
-      mute.setAttribute('aria-pressed', String(video.muted));
-      return;
-    }
-    toggle();
-  });
-  control.addEventListener('keydown', event => {
-    if (event.key === 'Enter' || event.key === ' ') {event.preventDefault();toggle();}
-  });
-  video.addEventListener('play', sync);
-  video.addEventListener('pause', sync);
-  video.play().catch(sync);
+const menuButton = document.querySelector('.menu-toggle');
+menuButton?.addEventListener('click', () => {
+  const open = menuButton.getAttribute('aria-expanded') !== 'true';
+  menuButton.setAttribute('aria-expanded', String(open));
+  document.body.classList.toggle('nav-open', open);
 });
-
-document.querySelectorAll('.wixui-slideshow').forEach(show => {
-  const slides = [...show.querySelectorAll('.replica-slide')];
-  const dots = [...show.querySelectorAll('nav[aria-label="Slides"] a')];
+document.addEventListener('keydown', event => {
+  if (event.key === 'Escape' && document.body.classList.contains('nav-open')) {
+    document.body.classList.remove('nav-open');
+    menuButton.setAttribute('aria-expanded', 'false');
+    menuButton.focus();
+  }
+});
+const visitCount = document.querySelector('[data-visit-count]');
+if (visitCount) {
+  try {
+    const saved = Number(localStorage.getItem('laboratory-visits') || 0);
+    const visits = Number.isSafeInteger(saved) && saved >= 0 && saved < Number.MAX_SAFE_INTEGER ? saved + 1 : 1;
+    localStorage.setItem('laboratory-visits', String(visits));
+    const digits = String(visits).padStart(5,'0');
+    visitCount.replaceChildren(...Array.from(digits, digit => {
+      const cell = document.createElement('span');
+      cell.className = 'visit-digit';
+      cell.textContent = digit;
+      cell.setAttribute('aria-hidden','true');
+      return cell;
+    }));
+    visitCount.setAttribute('aria-label', `${visits.toLocaleString()} visits in this browser`);
+  } catch {
+    visitCount.textContent = '—';
+    visitCount.parentElement.title = 'Visit counting is unavailable because browser storage is disabled.';
+  }
+}
+const slides = [...document.querySelectorAll('.announcement-slide')];
+if (slides.length) {
+  const dots = [...document.querySelectorAll('[data-slide-index]')];
   let current = 0;
   const select = index => {
     current = (index + slides.length) % slides.length;
-    slides.forEach((slide, i) => {
+    slides.forEach((slide,i) => {
       slide.hidden = i !== current;
-      slide.setAttribute('aria-hidden', String(i !== current));
       slide.querySelectorAll('iframe').forEach(frame => {
         if (i === current && !frame.hasAttribute('src')) frame.src = frame.dataset.src;
         else if (i !== current) frame.removeAttribute('src');
       });
     });
-    dots.forEach((dot, i) => {
-      dot.classList.toggle('JPnvZO', i === current);
-      dot.parentElement.setAttribute('aria-current', String(i === current));
-    });
+    dots.forEach((dot,i) => dot.setAttribute('aria-current',String(i === current)));
   };
-  show.querySelector('[data-testid="nextButton"]').addEventListener('click', () => select(current + 1));
-  show.querySelector('[data-testid="prevButton"]').addEventListener('click', () => select(current - 1));
-  dots.forEach((dot, i) => dot.addEventListener('click', event => {
-    event.preventDefault();select(i);
-    history.replaceState(null, '', dot.getAttribute('href'));
-  }));
-  show.addEventListener('keydown', event => {
-    if (event.key === 'ArrowRight') {event.preventDefault();select(current + 1);}
-    if (event.key === 'ArrowLeft') {event.preventDefault();select(current - 1);}
+  document.querySelector('[data-slide-next]').addEventListener('click', () => select(current+1));
+  document.querySelector('[data-slide-prev]').addEventListener('click', () => select(current-1));
+  dots.forEach(dot => dot.addEventListener('click', () => select(Number(dot.dataset.slideIndex))));
+  document.querySelector('.updates-section').addEventListener('keydown', event => {
+    if (event.key === 'ArrowRight') {event.preventDefault();select(current+1);}
+    if (event.key === 'ArrowLeft') {event.preventDefault();select(current-1);}
   });
   const initial = slides.findIndex(slide => '#' + slide.id === location.hash);
   select(initial >= 0 ? initial : 0);
-});
+}
+const dialog = document.querySelector('.image-dialog');
+if (dialog) {
+  document.querySelectorAll('[data-image-viewer]').forEach(button => {
+    button.addEventListener('click', () => {
+      const image = button.querySelector('img');
+      dialog.querySelector('img').src = image.src;
+      dialog.querySelector('img').alt = image.alt;
+      dialog.showModal();
+    });
+  });
+  dialog.querySelector('.dialog-close').addEventListener('click', () => dialog.close());
+  dialog.addEventListener('click', event => {
+    if (event.target === dialog) {
+      const rect = dialog.getBoundingClientRect();
+      if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) dialog.close();
+    }
+  });
+}
+const sectionLinks = [...document.querySelectorAll('.section-index a')];
+if (sectionLinks.length && 'IntersectionObserver' in window) {
+  const observer = new IntersectionObserver(entries => {
+    const visible = entries.filter(entry => entry.isIntersecting).sort((a,b) => a.boundingClientRect.top - b.boundingClientRect.top);
+    if (visible.length) sectionLinks.forEach(link => link.classList.toggle('is-active',link.hash === '#'+visible[0].target.id));
+  },{rootMargin:'-10% 0px -65% 0px'});
+  document.querySelectorAll('.page-content .content-section').forEach(section => observer.observe(section));
+}
