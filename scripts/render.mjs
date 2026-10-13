@@ -37,7 +37,7 @@ const pages = [
 
 function shell(page, main) {
   const title = pages.find(item => item[0] === page)[2];
-  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>${title} | Material Dynamics Laboratory</title><meta name="description" content="Material Dynamics Laboratory"><link rel="icon" href="${content.home.images.img_hyio97wf.src}"><link rel="stylesheet" href="/styles.css?v=text-layout-20261013"><script src="/app.js?v=powr-counter-style-20261013" defer></script></head><body data-page="${page}">
+  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>${title} | Material Dynamics Laboratory</title><meta name="description" content="Material Dynamics Laboratory"><link rel="icon" href="${content.home.images.img_hyio97wf.src}"><link rel="stylesheet" href="/styles.css?v=aligned-layout-20261013"><script src="/app.js?v=powr-counter-style-20261013" defer></script></head><body data-page="${page}">
   <a class="skip-link" href="#main">Skip to content</a>
   <header class="site-header"><div class="masthead container"><a class="brand" href="/">${image('home','img_hyio97wf','IIT Kharagpur emblem','brand-emblem')}<span class="brand-title">Material Dynamics Laboratory</span></a>${image('home','img_comp-lgpmdfdf','Split Hopkinson pressure bar apparatus','header-instrument')}<button class="menu-toggle" aria-label="Menu" aria-expanded="false" aria-controls="site-navigation"><span class="menu-icon" aria-hidden="true"></span><span>Menu</span></button></div>
   <div class="nav-rule"><nav id="site-navigation" class="site-nav container" aria-label="Main navigation">${pages.map(([key,url,label]) => `<a href="${url}" ${key===page?'aria-current="page"':''}>${label}</a>`).join('')}</nav></div></header>
@@ -73,8 +73,16 @@ function section(id,title,body,cls='') {return `<section id="${id}" class="conte
 function indexedLayout(page, title, sections) {
   return `<div class="container">${pageHeading(title)}<div class="indexed-layout"><aside class="section-index"><nav aria-label="Page sections">${sections.map(([id,title])=>`<a href="#${id}">${title}</a>`).join('')}</nav></aside><div class="page-content">${sections.map(([id,title,body,cls])=>section(id,title,body,cls)).join('')}</div></div></div>`;
 }
+function academicRecords(id) {
+  const chunks = copy('bio-sketch',id).split(/<ul>\s*<li>\s*<p><strong>([\s\S]*?)<\/strong><\/p>\s*<\/li>\s*<\/ul>/);
+  return `<div class="academic-records">${chunks.slice(1).reduce((records,part,index,parts) => {
+    if (index % 2) return records;
+    const institution = parts[index+1].replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim();
+    return records + `<article class="academic-record"><h3>${part.trim()}</h3><p>${institution}</p></article>`;
+  },'')}</div>`;
+}
 function biography() {
-  return `<div class="container">${pageHeading('About Prof. S Mishra')}<section class="biography-layout"><div class="prose biography-copy">${copy('bio-sketch','comp-lgpjgg8h')}</div><figure class="portrait">${image('bio-sketch','img_comp-lgpjgymu','Prof. Sunita Mishra')}</figure></section><div class="biography-columns">${section('education',text('bio-sketch','hy736r5y'),`<div class="prose">${copy('bio-sketch','hy737jks')}</div>`)}${section('experience',text('bio-sketch','comp-k6b4sg2n'),`<div class="prose">${copy('bio-sketch','comp-k6b4y426')}</div>`)}</div></div>`;
+  return `<div class="container">${pageHeading('About Prof. S Mishra')}<section class="biography-layout"><div class="prose biography-copy">${copy('bio-sketch','comp-lgpjgg8h')}</div><figure class="portrait">${image('bio-sketch','img_comp-lgpjgymu','Prof. Sunita Mishra')}</figure></section><div class="biography-columns">${section('education',text('bio-sketch','hy736r5y'),academicRecords('hy737jks'))}${section('experience',text('bio-sketch','comp-k6b4sg2n'),academicRecords('comp-k6b4y426'))}</div></div>`;
 }
 function profile(imageId, blockId) {
   const paragraphs = block('team-members',blockId).paragraphs;
