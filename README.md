@@ -22,18 +22,12 @@ Open http://127.0.0.1:4173/. After editing files while the server is running, ru
 - `scripts/render.mjs`: page templates.
 - `scripts/build.mjs`: generates `src/pages/` and `dist/`.
 - `scripts/serve.mjs`: local development server.
-- `.github/workflows/pages.yml`: GitHub Pages deployment.
 
 Generated folders are excluded from Git. Edit the source content and templates rather than generated HTML.
 
-## GitHub Pages
+## Build
 
-1. Open [Settings → Pages](https://github.com/HardikChittora/smishra/settings/pages).
-2. Under **Build and deployment**, set **Source** to **GitHub Actions**.
-3. Open the **Actions** tab, select **Deploy website to GitHub Pages**, and click **Run workflow** on `main`.
-4. After a successful deployment, visit https://hardikchittora.github.io/smishra/.
-
-Future pushes to `main` deploy automatically. The workflow builds with `/smishra/` as the base path; local builds use `/`.
+Run `npm run build` to generate the complete static website in `dist/`. Use `dist` as the output directory when deploying to a static hosting service.
 
 ## Visit counter
 
