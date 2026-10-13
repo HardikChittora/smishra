@@ -133,6 +133,12 @@ function projects() {
   }).join('')}</ol>`;
   return indexedLayout('projects','Projects',[['research-projects',text('projects','comp-kwrzubb1'),projectList(groups[0])],['consultancy-projects',text('projects','comp-kwrzv1yg'),projectList(groups[1])]]);
 }
+function teachingCourses() {
+  const courses = block('professional-activities-1','comp-je7ai9o1').paragraphs
+    .flatMap(p => p.html.replace(/<strong>\s*<\/strong>/g,'').trim().split(/\s+(?=\d+\.\s)/))
+    .filter(course => /^\d+\.\s/.test(course));
+  return `<ol>${courses.map(course => `<li>${course.replace(/^\d+\.\s*/,'')}</li>`).join('')}</ol>`;
+}
 function activities() {
   const p='professional-activities-1';
   const sections = [
@@ -140,7 +146,7 @@ function activities() {
     ['institute','comp-kg2i5rpp','comp-kg2i97jb'],['department','comp-lgpks9ml','comp-lgpkvqtt'],
     ['honours','comp-je79ss1d','comp-je79sxq8'],['talks','comp-je79t6qn','comp-je79u6b4'],
     ['bodies','comp-lzu31nnk','comp-lzu338tl'],['memberships','comp-kf9lw53j','comp-kf9lxu1o']
-  ].map(([id,heading,key])=>[id,text(p,heading),`<div class="prose activity-list">${copy(p,key)}</div>`]);
+  ].map(([id,heading,key])=>[id,text(p,heading),`<div class="prose activity-list">${id==='teaching'?teachingCourses():copy(p,key)}</div>`]);
   return indexedLayout(p,'Professional Activities',sections);
 }
 const renders = {'home':homepage,'bio-sketch':biography,'team-members':members,'projects':projects,'publications':publications,'professional-activities-1':activities};
