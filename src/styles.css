@@ -69,7 +69,7 @@ figcaption{font-size:11px;color:var(--muted);line-height:1.6;padding-top:10px}
 .aeration-copy p:not(.eyebrow){font-size:14px;color:var(--muted);line-height:1.8;margin:18px 0 23px}
 .aeration-images{display:grid;grid-template-columns:1fr 1fr;gap:22px}
 .aeration-images>figure{width:100%;max-width:var(--figure-width);justify-self:center}
-.aeration-images img{height:auto;aspect-ratio:var(--figure-ratio);object-fit:contain;background:var(--paper)}
+.aeration-images img{height:auto;aspect-ratio:600/404;object-fit:contain;background:var(--paper)}
 .updates-section{border-top:1px solid var(--line);padding:40px 0 66px}
 .slide-controls{display:flex;gap:8px}
 .slide-controls button{width:36px;height:36px;border:1px solid var(--line);background:#fff;font-size:20px;line-height:1}
@@ -208,4 +208,5 @@ figcaption{font-size:11px;color:var(--muted);line-height:1.6;padding-top:10px}
 .visit-digits{display:flex;align-items:center;justify-content:center;gap:4px;min-height:18px}
 .visit-digit{display:flex;align-items:center;justify-content:center;width:18px;height:18px;border:1px solid #dcdcdc;border-radius:3px;background:#f5f5f5;color:#d2c0a8;font:400 13px/1 'Counter Basic',Arial,sans-serif}
 .visit-label{color:#6b6b6b;font:400 16px/1.1 'Times New Roman',serif}
+@media(max-width:600px){.aeration-images img{aspect-ratio:var(--figure-ratio)}}
 @media(max-width:600px){.footer-bottom{align-items:flex-start}.visit-counter{align-self:center}}
