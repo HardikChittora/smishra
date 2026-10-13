@@ -13,7 +13,10 @@ for (const page of Object.values(content)) {
 }
 const escape = value => String(value).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
 const block = (page, id) => content[page].blocks[id];
-const copy = (page, id) => block(page,id).html;
+const copy = (page, id) => block(page,id).html
+  // The source contains list items outside a list; give their markers room.
+  .replace(/<strong>\s*(<li>[\s\S]*?<\/li>)\s*<\/strong>/g, '<ul>$1</ul>')
+  .replace(/<p>(?:\s|<strong>\s*<\/strong>)*<\/p>/g, '');
 const text = (page, id) => escape(block(page,id).text);
 const originalFigureSizes = {
   'img_comp-lgpjwbzb':[229,240], 'img_comp-lgpjs8og':[287,240],
@@ -34,7 +37,7 @@ const pages = [
 
 function shell(page, main) {
   const title = pages.find(item => item[0] === page)[2];
-  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>${title} | Material Dynamics Laboratory</title><meta name="description" content="Material Dynamics Laboratory"><link rel="icon" href="${content.home.images.img_hyio97wf.src}"><link rel="stylesheet" href="/styles.css?v=lato-mobile-stack-20261013"><script src="/app.js?v=powr-counter-style-20261013" defer></script></head><body data-page="${page}">
+  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>${title} | Material Dynamics Laboratory</title><meta name="description" content="Material Dynamics Laboratory"><link rel="icon" href="${content.home.images.img_hyio97wf.src}"><link rel="stylesheet" href="/styles.css?v=text-layout-20261013"><script src="/app.js?v=powr-counter-style-20261013" defer></script></head><body data-page="${page}">
   <a class="skip-link" href="#main">Skip to content</a>
   <header class="site-header"><div class="masthead container"><a class="brand" href="/">${image('home','img_hyio97wf','IIT Kharagpur emblem','brand-emblem')}<span class="brand-title">Material Dynamics Laboratory</span></a>${image('home','img_comp-lgpmdfdf','Split Hopkinson pressure bar apparatus','header-instrument')}<button class="menu-toggle" aria-label="Menu" aria-expanded="false" aria-controls="site-navigation"><span class="menu-icon" aria-hidden="true"></span><span>Menu</span></button></div>
   <div class="nav-rule"><nav id="site-navigation" class="site-nav container" aria-label="Main navigation">${pages.map(([key,url,label]) => `<a href="${url}" ${key===page?'aria-current="page"':''}>${label}</a>`).join('')}</nav></div></header>
